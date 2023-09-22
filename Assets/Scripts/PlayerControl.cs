@@ -8,7 +8,12 @@ public class PlayerControl : MonoBehaviour
 {
     #region Variables
     public float maxSpeed;
-    public float jumpPower;
+    public float jumpForce;
+    public float velPower;
+    public float frictionAmount;
+
+    public float jumpInputBufferTime;
+    public float coyoteTime;
     #endregion
 
     public LayerMask solidLayer;
@@ -17,18 +22,78 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private Transform groundCheckPoint;
     [SerializeField] private Vector2 groundCheckSize;
 
-    private float horizontalInput;
+    private float moveInput;
     private Rigidbody2D rb;
+    private float lastOnGroundTime;
+    private float lastPressedJumpTime;
+    private bool isJumping;
     
 
-    void Awake()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
-    void FixedUpdate()
+    private void Start()
     {
-        rb.velocity = new Vector2(horizontalInput * maxSpeed, rb.velocity.y);
+        isJumping = false;
+    }
+
+    private void Update()
+    {
+        lastOnGroundTime -= Time.deltaTime;
+        lastPressedJumpTime -= Time.deltaTime;
+
+        if (IsGrounded() && !isJumping)
+        {
+            lastOnGroundTime = coyoteTime;
+        }
+
+        if (isJumping && rb.velocity.y < 0)
+        {
+            isJumping = false;
+        }
+
+        if (lastOnGroundTime > 0 && lastPressedJumpTime > 0)
+        {
+            Jump();
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        Run();
+        //Debug.Log(rb.velocity.x);
+    }
+
+    private void Run()
+    {
+        float targetSpeed = moveInput * maxSpeed;
+        float speedDiff = targetSpeed - rb.velocity.x;
+        float movement = Mathf.Pow(Mathf.Abs(speedDiff), velPower) * Mathf.Sign(speedDiff);
+
+        rb.AddForce(movement * Vector2.right);
+
+        if (Mathf.Abs(moveInput) < 0.01f)
+        {
+            float friction = Mathf.Min(Mathf.Abs(rb.velocity.x), frictionAmount);
+            friction *= -Mathf.Sign(rb.velocity.x);
+            rb.AddForce(friction * Vector2.right, ForceMode2D.Impulse);
+        }
+    }
+
+    private void Jump()
+    {
+        isJumping = true;
+        lastOnGroundTime = 0;
+        lastPressedJumpTime = 0;
+
+        rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+    }
+
+    private void JumpCut()
+    {
+        rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
     }
 
     bool IsGrounded()
@@ -36,24 +101,24 @@ public class PlayerControl : MonoBehaviour
         return Physics2D.OverlapBox(groundCheckPoint.position, groundCheckSize, 0, solidLayer);
     }
 
-    public void Move(InputAction.CallbackContext context)
+    public void OnMoveInput(InputAction.CallbackContext context)
     {
-        horizontalInput = context.ReadValue<float>();
+        moveInput = context.ReadValue<float>();
     }
 
-    public void Jump(InputAction.CallbackContext context)
+    public void OnJumpInput(InputAction.CallbackContext context)
     {
-        if (context.performed && IsGrounded())
+        if (context.performed)
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpPower);
+            lastPressedJumpTime = jumpInputBufferTime;
         }
         if (context.canceled && rb.velocity.y > 0f)
         {
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
+            JumpCut();
         }
     }
 
-    public void Fire(InputAction.CallbackContext context)
+    public void OnFireInput(InputAction.CallbackContext context)
     {
 
     }

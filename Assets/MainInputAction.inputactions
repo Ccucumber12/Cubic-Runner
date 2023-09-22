@@ -35,7 +35,7 @@
             ],
             "bindings": [
                 {
-                    "name": "1D Axis",
+                    "name": "Arrows",
                     "id": "5067728a-8940-4181-9c61-5b847a4411f8",
                     "path": "1DAxis",
                     "interactions": "",
@@ -68,6 +68,39 @@
                     "isPartOfComposite": true
                 },
                 {
+                    "name": "WASD",
+                    "id": "649c2d5a-74cd-4f52-ade6-4f8c6e55deb5",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "f4e9042c-82af-4d4b-b846-b65e3972a01c",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "46ae4dbf-8da1-4b79-895e-b7480dbf5e7f",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
                     "name": "",
                     "id": "7ef58299-bade-4fb3-b6fc-0d3d8241aded",
                     "path": "<Keyboard>/space",
@@ -80,11 +113,22 @@
                 },
                 {
                     "name": "",
-                    "id": "fafc0eea-ac39-4862-bf9b-86223a5cf97b",
-                    "path": "<Keyboard>/z",
+                    "id": "7d987660-e810-4026-a438-66867413e9b5",
+                    "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b3a827d5-9a7b-42c1-af9f-535c60466355",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
                     "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
