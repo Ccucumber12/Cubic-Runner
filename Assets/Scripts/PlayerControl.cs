@@ -1,10 +1,5 @@
-using Cainos.LucidEditor;
 using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.Search;
 using UnityEngine;
-using UnityEngine.Assertions;
 using UnityEngine.InputSystem;
 
 public class PlayerControl : MonoBehaviour
@@ -41,16 +36,18 @@ public class PlayerControl : MonoBehaviour
     public float dashInputBufferTime;
 
     [Header("Fire")]
+    public bool hasFireAbility;
+    public Transform firePoint;
     public GameObject bullet;
     public float fireCoolDownTime;
     public float fireInputBufferTime;
 
     [Header("Checks")]
-    [SerializeField] private Transform groundCheckPoint;
-    [SerializeField] private Vector2 groundCheckSize;
-    [SerializeField] private Transform leftWallCheckPoint;
-    [SerializeField] private Transform rightWallCheckPoint;
-    [SerializeField] private Vector2 wallCheckSize;
+    public Transform groundCheckPoint;
+    public Vector2 groundCheckSize;
+    public Transform leftWallCheckPoint;
+    public Transform rightWallCheckPoint;
+    public Vector2 wallCheckSize;
 
     private float moveInput;
     private Rigidbody2D rb;
@@ -70,6 +67,9 @@ public class PlayerControl : MonoBehaviour
     private bool canDoubleJump;
     private bool isFacingRight;
 
+    private Vector3 leftWallCheckPointDelta;
+    private Vector3 rightWallCheckPointDelta;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -83,6 +83,8 @@ public class PlayerControl : MonoBehaviour
         isFacingRight = true;
         rb.gravityScale = gravityScale;
         trail.enabled = renderTrail;
+        leftWallCheckPointDelta = leftWallCheckPoint.position - transform.position;
+        rightWallCheckPointDelta = rightWallCheckPoint.position - transform.position;
     }
 
     private void Update()
@@ -97,7 +99,7 @@ public class PlayerControl : MonoBehaviour
 
         trail.enabled = renderTrail;
 
-        if (GoundCheck() && !isJumping)
+        if (GoundCheck())
         {
             lastOnGroundTime = coyoteTime;
             canDoubleJump = true;
@@ -106,6 +108,7 @@ public class PlayerControl : MonoBehaviour
         else if(WallCheck())
         {
             lastOnWallTime = coyoteTime;
+            canDoubleJump = true;
             canDash = true;
         }
 
@@ -135,7 +138,7 @@ public class PlayerControl : MonoBehaviour
             StartCoroutine(Dash());
         }
 
-        if (!fireInCoolDown && lastPressedFireTime > 0)
+        if (hasFireAbility && !fireInCoolDown && lastPressedFireTime > 0)
         {
             StartCoroutine(Fire());
         }
@@ -234,8 +237,8 @@ public class PlayerControl : MonoBehaviour
     private IEnumerator Fire()
     {
         fireInCoolDown = true;
-        GameObject newBullet = Instantiate(bullet, transform.position, transform.rotation);
-        newBullet.GetComponent<Bullet>().speed *= GetDirection();
+        GameObject newBullet = Instantiate(bullet, firePoint.position, transform.rotation);
+        newBullet.GetComponent<Bullet>().direction = GetDirection();
         
         yield return new WaitForSeconds(fireCoolDownTime);
         fireInCoolDown = false;
@@ -243,9 +246,9 @@ public class PlayerControl : MonoBehaviour
 
     private void Turn()
     {
-        Vector3 scale = spriteTransform.localScale;
+        Vector3 scale = transform.localScale;
         scale.x *= -1;
-        spriteTransform.localScale = scale;
+        transform.localScale = scale;
         isFacingRight = !isFacingRight;
     }
 
@@ -265,9 +268,9 @@ public class PlayerControl : MonoBehaviour
     bool WallCheck()
     {
         wallJumpDirection = 0;
-        if (Physics2D.OverlapBox(leftWallCheckPoint.position, wallCheckSize, 0, solidLayer))
+        if (Physics2D.OverlapBox(transform.position + leftWallCheckPointDelta, wallCheckSize, 0, solidLayer))
             wallJumpDirection = 1;
-        else if (Physics2D.OverlapBox(rightWallCheckPoint.position, wallCheckSize, 0, solidLayer))
+        else if (Physics2D.OverlapBox(transform.position + rightWallCheckPointDelta, wallCheckSize, 0, solidLayer))
             wallJumpDirection = -1;
         return wallJumpDirection != 0;
     }
@@ -291,20 +294,31 @@ public class PlayerControl : MonoBehaviour
 
     public void OnFireInput(InputAction.CallbackContext context)
     {
-        lastPressedFireTime = fireInputBufferTime;
+        if (context.started)
+        {
+            lastPressedFireTime = fireInputBufferTime;
+        }
     }
 
 
     public void OnDashInput(InputAction.CallbackContext context)
     {
-        lastPressedDashTime = dashInputBufferTime;
+        if (context.started)
+        {
+            Debug.Log("dash");
+            lastPressedDashTime = dashInputBufferTime;
+        }
     }
 
+#if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(groundCheckPoint.position, groundCheckSize);
         Gizmos.DrawWireCube(leftWallCheckPoint.position, wallCheckSize);
         Gizmos.DrawWireCube(rightWallCheckPoint.position, wallCheckSize);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(firePoint.position, bullet.GetComponent<CircleCollider2D>().radius * bullet.transform.localScale.x);
     }
+#endif
 }
