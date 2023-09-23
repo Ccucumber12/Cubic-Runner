@@ -1,34 +1,49 @@
 using Cainos.LucidEditor;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEditor.Search;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.InputSystem;
 
 public class PlayerControl : MonoBehaviour
 {
-    #region Variables
     public float maxSpeed;
-    public float jumpForce;
-    public float wallJumpForce;
     public float acceleratePower;
     public float frictionAmount;
-
-    public float jumpInputBufferTime;
-    public float coyoteTime;
-    [Range(0, 1)] public float jumpCutAmount;
-    public float wallJumpFreeze;
-
     public float gravityScale;
     public float fallGravityMultiplier;
     public float maxFallSpeed;
-    public float jumpCoolDown;
     public bool renderTrail;
-    #endregion
 
     public LayerMask solidLayer;
     public ParticleSystem doubleJumpEffect;
     public TrailRenderer trail;
+    public Transform spriteTransform;
+
+    [Header("Jump")]
+    public bool hasDoubleJumpAbility;
+    public bool hasWallJumpAbility;
+    public float jumpForce;
+    public float wallJumpForce;
+    public float coyoteTime;
+    public float jumpCoolDown;
+    public float wallJumpFreeze;
+    [Range(0, 1)] public float jumpCutAmount;
+    public float jumpInputBufferTime;
+
+    [Header("Dash")]
+    public bool hasDashAbility;
+    public float dashForce;
+    public float dashTime;
+    public float dashCoolDown;
+    public float dashInputBufferTime;
+
+    [Header("Fire")]
+    public GameObject bullet;
+    public float fireCoolDownTime;
+    public float fireInputBufferTime;
 
     [Header("Checks")]
     [SerializeField] private Transform groundCheckPoint;
@@ -43,11 +58,17 @@ public class PlayerControl : MonoBehaviour
     private float lastOnWallTime;
     private float lastWallJumpTime;
     private float lastPressedJumpTime;
+    private float lastPressedDashTime;
+    private float lastPressedFireTime;
     private float jumpCoolDownTime;
     private int wallJumpDirection;
     private bool isJumping;
+    private bool isDashing;
+    private bool canDash;
+    private bool dashInCoolDown;
+    private bool fireInCoolDown;
     private bool canDoubleJump;
-    
+    private bool isFacingRight;
 
     private void Awake()
     {
@@ -58,6 +79,8 @@ public class PlayerControl : MonoBehaviour
     {
         isJumping = false;
         canDoubleJump = true;
+        canDash = true;
+        isFacingRight = true;
         rb.gravityScale = gravityScale;
         trail.enabled = renderTrail;
     }
@@ -68,6 +91,8 @@ public class PlayerControl : MonoBehaviour
         lastOnWallTime -= Time.deltaTime;
         lastWallJumpTime -= Time.deltaTime;
         lastPressedJumpTime -= Time.deltaTime;
+        lastPressedDashTime -= Time.deltaTime;
+        lastPressedFireTime -= Time.deltaTime;
         jumpCoolDownTime -= Time.deltaTime;
 
         trail.enabled = renderTrail;
@@ -76,10 +101,12 @@ public class PlayerControl : MonoBehaviour
         {
             lastOnGroundTime = coyoteTime;
             canDoubleJump = true;
+            canDash = true;
         }
         else if(WallCheck())
         {
             lastOnWallTime = coyoteTime;
+            canDash = true;
         }
 
         if (isJumping && rb.velocity.y < 0)
@@ -93,30 +120,49 @@ public class PlayerControl : MonoBehaviour
             {
                 Jump();
             }
-            else if (lastOnWallTime > 0)
+            else if (hasWallJumpAbility && lastOnWallTime > 0)
             {
                 WallJump(wallJumpDirection);
             }
-            else if (canDoubleJump)
+            else if (hasDoubleJumpAbility && canDoubleJump)
             {
                 DoubleJump();
             }
         }
 
-        if (rb.velocity.y < 0)
+        if (hasDashAbility && canDash && !dashInCoolDown && lastPressedDashTime > 0)
         {
-            rb.gravityScale = gravityScale * fallGravityMultiplier;
-            rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
+            StartCoroutine(Dash());
         }
-        else
+
+        if (!fireInCoolDown && lastPressedFireTime > 0)
         {
-            rb.gravityScale = gravityScale;
+            StartCoroutine(Fire());
+        }
+
+        if (moveInput != 0)
+        {
+            if (isFacingRight ^ (moveInput > 0))
+                Turn();
+        }
+
+        if (!isDashing)
+        {
+            if (rb.velocity.y < 0)
+            {
+                rb.gravityScale = gravityScale * fallGravityMultiplier;
+                rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
+            }
+            else
+            {
+                rb.gravityScale = gravityScale;
+            }
         }
     }
 
     private void FixedUpdate()
     {
-        if (lastWallJumpTime <= 0)
+        if (lastWallJumpTime <= 0 && !isDashing)
         {
             Run();
         }
@@ -169,6 +215,48 @@ public class PlayerControl : MonoBehaviour
         rb.AddForce(Vector2.down * rb.velocity.y * jumpCutAmount, ForceMode2D.Impulse);
     }
 
+    private IEnumerator Dash()
+    {
+        canDash = false;
+        dashInCoolDown = true;
+        isDashing = true;
+        float originalGravity = rb.gravityScale;
+        rb.gravityScale = 0;
+        rb.velocity = new Vector2(0, 0);
+        rb.AddForce(Vector2.right * GetDirection() * dashForce, ForceMode2D.Impulse);
+        yield return new WaitForSeconds(dashTime);
+        rb.gravityScale = originalGravity;
+        isDashing = false;
+        yield return new WaitForSeconds(dashCoolDown);
+        dashInCoolDown = false;
+    }
+
+    private IEnumerator Fire()
+    {
+        fireInCoolDown = true;
+        GameObject newBullet = Instantiate(bullet, transform.position, transform.rotation);
+        newBullet.GetComponent<Bullet>().speed *= GetDirection();
+        
+        yield return new WaitForSeconds(fireCoolDownTime);
+        fireInCoolDown = false;
+    }
+
+    private void Turn()
+    {
+        Vector3 scale = spriteTransform.localScale;
+        scale.x *= -1;
+        spriteTransform.localScale = scale;
+        isFacingRight = !isFacingRight;
+    }
+
+    private int GetDirection()
+    {
+        if (moveInput != 0)
+            return (int)Mathf.Sign(moveInput);
+        else
+            return isFacingRight ? 1 : -1;
+    }
+
     bool GoundCheck()
     {
         return Physics2D.OverlapBox(groundCheckPoint.position, groundCheckSize, 0, solidLayer);
@@ -203,9 +291,14 @@ public class PlayerControl : MonoBehaviour
 
     public void OnFireInput(InputAction.CallbackContext context)
     {
-
+        lastPressedFireTime = fireInputBufferTime;
     }
 
+
+    public void OnDashInput(InputAction.CallbackContext context)
+    {
+        lastPressedDashTime = dashInputBufferTime;
+    }
 
     private void OnDrawGizmosSelected()
     {
