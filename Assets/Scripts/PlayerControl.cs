@@ -15,7 +15,6 @@ public class PlayerControl : MonoBehaviour
     public LayerMask solidLayer;
     public ParticleSystem doubleJumpEffect;
     public TrailRenderer trail;
-    public Transform spriteTransform;
 
     [Header("Jump")]
     public bool hasDoubleJumpAbility;
@@ -61,14 +60,16 @@ public class PlayerControl : MonoBehaviour
     private int wallJumpDirection;
     private bool isJumping;
     private bool isDashing;
-    private bool canDash;
     private bool dashInCoolDown;
     private bool fireInCoolDown;
     private bool canDoubleJump;
+    private bool canDash;
     private bool isFacingRight;
 
     private Vector3 leftWallCheckPointDelta;
     private Vector3 rightWallCheckPointDelta;
+
+    private GameManager gameManager;
 
     private void Awake()
     {
@@ -85,6 +86,7 @@ public class PlayerControl : MonoBehaviour
         trail.enabled = renderTrail;
         leftWallCheckPointDelta = leftWallCheckPoint.position - transform.position;
         rightWallCheckPointDelta = rightWallCheckPoint.position - transform.position;
+        gameManager = GameManager.Instance;
     }
 
     private void Update()
@@ -138,7 +140,7 @@ public class PlayerControl : MonoBehaviour
             StartCoroutine(Dash());
         }
 
-        if (hasFireAbility && !fireInCoolDown && lastPressedFireTime > 0)
+        if (hasFireAbility && !fireInCoolDown && lastPressedFireTime > 0 && gameManager.appleCount > 0)
         {
             StartCoroutine(Fire());
         }
@@ -236,6 +238,7 @@ public class PlayerControl : MonoBehaviour
 
     private IEnumerator Fire()
     {
+        gameManager.appleFired();
         fireInCoolDown = true;
         GameObject newBullet = Instantiate(bullet, firePoint.position, transform.rotation);
         newBullet.GetComponent<Bullet>().direction = GetDirection();
@@ -282,7 +285,7 @@ public class PlayerControl : MonoBehaviour
 
     public void OnJumpInput(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.performed)
         {
             lastPressedJumpTime = jumpInputBufferTime;
         }
@@ -294,7 +297,7 @@ public class PlayerControl : MonoBehaviour
 
     public void OnFireInput(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.performed)
         {
             lastPressedFireTime = fireInputBufferTime;
         }
@@ -303,9 +306,8 @@ public class PlayerControl : MonoBehaviour
 
     public void OnDashInput(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.performed)
         {
-            Debug.Log("dash");
             lastPressedDashTime = dashInputBufferTime;
         }
     }
