@@ -1,7 +1,9 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.Windows;
 
 public class EnterManager : MonoBehaviour
 {
@@ -10,10 +12,16 @@ public class EnterManager : MonoBehaviour
     public float floatingLoopLength;
     
     private Vector3 hintTextAnchorPoint;
+    private GameManager gameManager;
+
+    private bool firstSchemeChange;
 
     void Start()
     {
+        gameManager = GameManager.Instance;
         hintTextAnchorPoint = hintText.transform.position;
+
+        UpdateHintMessage();
     }
 
     void Update()
@@ -23,12 +31,12 @@ public class EnterManager : MonoBehaviour
         hintText.transform.position = pos;
     }
 
-    public void OnControlChanged(PlayerInput input)
+    private void UpdateHintMessage()
     {
-        string scheme = input.currentControlScheme;
+        string scheme = gameManager.currentControlScheme;
         if (scheme == "Gamepad")
         {
-            hintText.text = "Press A to start...";
+            hintText.text = "Press button A to start...";
         }
         else if (scheme == "Keyboard")
         {
@@ -36,11 +44,23 @@ public class EnterManager : MonoBehaviour
         }
     }
 
+    public void OnControlChanged(PlayerInput input)
+    {
+        if (!firstSchemeChange)
+        {
+            // load scene will automatically change scheme to keyboard, thus ignore the first scheme change.
+            firstSchemeChange = true;
+            return;
+        }
+        gameManager.ControlsChanged(input.currentControlScheme);
+        UpdateHintMessage();
+    }
+
     public void OnGameStart(InputAction.CallbackContext context)
     {
         if (context.canceled)
         {
-            SceneManager.LoadScene("DevelopScene");
+            gameManager.StartGame();
         }
     }
 }

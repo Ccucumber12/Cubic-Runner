@@ -248,10 +248,10 @@
                 {
                     "name": "",
                     "id": "d2936c10-63de-489b-8746-eee94b7bc9a5",
-                    "path": "<Keyboard>/z",
+                    "path": "<Keyboard>/x",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard",
                     "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -281,7 +281,7 @@
                 {
                     "name": "",
                     "id": "b3682be3-4168-4414-9a5d-f4c5faf97155",
-                    "path": "<Keyboard>/x",
+                    "path": "<Keyboard>/z",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
@@ -362,7 +362,7 @@
             "id": "926b8d25-ba06-41ce-bef5-91f43fdba67f",
             "actions": [
                 {
-                    "name": "Restart",
+                    "name": "Return",
                     "type": "Button",
                     "id": "d29b8bea-57c9-4ba4-8bd6-53bcb5241340",
                     "expectedControlType": "Button",
@@ -375,22 +375,44 @@
                 {
                     "name": "",
                     "id": "02bf43a3-fa38-4c6a-b1d7-b590bb16d587",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Return",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fb3b5926-a16c-4f67-ba20-4bd1f478b540",
                     "path": "<Gamepad>/start",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "Restart",
+                    "action": "Return",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "d275b70b-82d2-4a2c-8b1d-200d4a143cd0",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Return",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "eed78cef-3a6d-4d4d-bb64-240a89195971",
                     "path": "<Keyboard>/r",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
-                    "action": "Restart",
+                    "action": "Return",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

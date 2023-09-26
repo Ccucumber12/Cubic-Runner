@@ -17,7 +17,7 @@ public class Collector : MonoBehaviour
         if (col.gameObject.tag == "Collectable")
         {
             Destroy(col.gameObject, 0.05f);
-            gameManager.appleCollected();
+            gameManager.AppleCollected();
         }
     }
 }

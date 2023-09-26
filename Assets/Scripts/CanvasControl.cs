@@ -14,11 +14,20 @@ public class CanvasControl : MonoBehaviour
     private GameManager gameManager;
 
     
-    void Start()
+    private void Start()
     {
         gameManager = GameManager.Instance;
+        gameManager.onTimerTick.AddListener(UpdateTime);
+        gameManager.onAppleCountChanged.AddListener(UpdateAppleCount);
+
         appleCountText.text = appleCountTextPrefix + "000";
         timeText.text = timeTextPrefix + gameManager.gameLength.ToString("D3");
+    }
+
+    private void OnDestroy()
+    {
+        gameManager.onTimerTick.RemoveListener(UpdateTime);
+        gameManager.onAppleCountChanged.RemoveListener(UpdateAppleCount);
     }
 
     public void UpdateAppleCount(int appleCount)

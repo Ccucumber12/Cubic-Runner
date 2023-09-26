@@ -44,40 +44,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e321988bb09fc9c4ba6c730682dad330, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameLength: 60
+  gameLength: 300
+  playerDeathAnimationLength: 3
+  gameScene: DevelopScene
   onGameStart:
     m_PersistentCalls:
       m_Calls: []
   onTimerTick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: CanvasControl, Assembly-CSharp
-        m_MethodName: UpdateTime
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   onTimeUp:
     m_PersistentCalls:
       m_Calls: []
   onAppleCountChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: CanvasControl, Assembly-CSharp
-        m_MethodName: UpdateAppleCount
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
+  onPlayerDied:
+    m_PersistentCalls:
+      m_Calls: []
+  onReachedGoal:
+    m_PersistentCalls:
+      m_Calls: []

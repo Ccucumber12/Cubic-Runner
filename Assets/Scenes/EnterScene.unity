@@ -158,7 +158,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.00048828125, y: 137}
+  m_AnchoredPosition: {x: 0.00048828125, y: 118}
   m_SizeDelta: {x: 0, y: -383.54553}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &9793449
@@ -183,7 +183,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Apple
 
-    Shooter'
+    Runner'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e8f7faf62ad9936478061973e2bb43d8, type: 2}
   m_sharedMaterial: {fileID: -7860732760543935121, guid: e8f7faf62ad9936478061973e2bb43d8, type: 2}
@@ -342,7 +342,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &326988433
 GameObject:
@@ -420,6 +420,79 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 326988433}
   m_CullTransparentMesh: 1
+--- !u!1001 &614383719
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 7395898803847391724, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
+      propertyPath: m_Name
+      value: GameManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 7395898803847391725, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
+      propertyPath: gameScene
+      value: DevelopScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 7395898803847391725, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
+      propertyPath: gameLength
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7395898803847391725, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
+      propertyPath: onTimerTick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7395898803847391725, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
+      propertyPath: onAppleCountChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7395898803847391730, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7395898803847391730, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 548.2531
+      objectReference: {fileID: 0}
+    - target: {fileID: 7395898803847391730, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 411.47406
+      objectReference: {fileID: 0}
+    - target: {fileID: 7395898803847391730, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.566761
+      objectReference: {fileID: 0}
+    - target: {fileID: 7395898803847391730, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7395898803847391730, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7395898803847391730, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7395898803847391730, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7395898803847391730, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7395898803847391730, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7395898803847391730, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
 --- !u!1 &859774148
 GameObject:
   m_ObjectHideFlags: 0
@@ -516,7 +589,7 @@ MonoBehaviour:
     m_ActionId: d29b8bea-57c9-4ba4-8bd6-53bcb5241340
     m_ActionName: EndScene/Restart[/XInputControllerWindows/start,/Keyboard/r]
   m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: Gamepad
+  m_DefaultControlScheme: 
   m_DefaultActionMap: EnterScene
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
@@ -588,7 +661,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Press A to start...
+  m_text: Press space to start...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e8f7faf62ad9936478061973e2bb43d8, type: 2}
   m_sharedMaterial: {fileID: -7860732760543935121, guid: e8f7faf62ad9936478061973e2bb43d8, type: 2}
@@ -794,7 +867,7 @@ RectTransform:
   - {fileID: 9793448}
   - {fileID: 1123287036}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -847,7 +920,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1781627287
 MonoBehaviour:

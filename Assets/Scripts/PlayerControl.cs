@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,6 +15,8 @@ public class PlayerControl : MonoBehaviour
 
     public LayerMask solidLayer;
     public ParticleSystem doubleJumpEffect;
+    public ParticleSystem deathEffect;
+    public SpriteMask spriteMask;
     public TrailRenderer trail;
 
     [Header("Jump")]
@@ -69,6 +72,10 @@ public class PlayerControl : MonoBehaviour
     private Vector3 leftWallCheckPointDelta;
     private Vector3 rightWallCheckPointDelta;
 
+    private bool playerFreezed;
+    private Vector2 velocityMemory;
+    private float gravityMemory;
+
     private GameManager gameManager;
 
     private void Awake()
@@ -78,7 +85,15 @@ public class PlayerControl : MonoBehaviour
 
     private void Start()
     {
-        isJumping = false;
+        gameManager = GameManager.Instance;
+        gameManager.onPlayerDied.AddListener(PlayerDied);
+        gameManager.onTimeUp.AddListener(PlayerDied);
+
+        Debug.Log("Set events");
+        PlayerInput playerInput = GetComponent<PlayerInput>();
+        playerInput.controlsChangedEvent.AddListener(gameManager.OnControlChanged);
+        playerInput.actions["Restart"].canceled += gameManager.Restart;
+
         canDoubleJump = true;
         canDash = true;
         isFacingRight = true;
@@ -86,7 +101,15 @@ public class PlayerControl : MonoBehaviour
         trail.enabled = renderTrail;
         leftWallCheckPointDelta = leftWallCheckPoint.position - transform.position;
         rightWallCheckPointDelta = rightWallCheckPoint.position - transform.position;
-        gameManager = GameManager.Instance;
+    }
+
+    private void OnDestroy()
+    {
+        gameManager.onPlayerDied.RemoveListener(PlayerDied);
+        gameManager.onTimeUp.RemoveListener(PlayerDied);
+        PlayerInput playerInput = GetComponent<PlayerInput>();
+        playerInput.controlsChangedEvent.RemoveListener(gameManager.OnControlChanged);
+        playerInput.actions["Restart"].canceled -= gameManager.Restart;
     }
 
     private void Update()
@@ -94,13 +117,13 @@ public class PlayerControl : MonoBehaviour
         lastOnGroundTime -= Time.deltaTime;
         lastOnWallTime -= Time.deltaTime;
         lastWallJumpTime -= Time.deltaTime;
+        jumpCoolDownTime -= Time.deltaTime;
+
         lastPressedJumpTime -= Time.deltaTime;
         lastPressedDashTime -= Time.deltaTime;
         lastPressedFireTime -= Time.deltaTime;
-        jumpCoolDownTime -= Time.deltaTime;
 
-        trail.enabled = renderTrail;
-
+        #region checks
         if (GoundCheck())
         {
             lastOnGroundTime = coyoteTime;
@@ -113,63 +136,69 @@ public class PlayerControl : MonoBehaviour
             canDoubleJump = true;
             canDash = true;
         }
+        #endregion
 
-        if (isJumping && rb.velocity.y < 0)
+        if (!playerFreezed)
         {
-            isJumping = false;
-        }
-
-        if (lastPressedJumpTime > 0 && jumpCoolDownTime <= 0)
-        {
-            if (lastOnGroundTime > 0 && !isJumping)
+            if (isJumping && rb.velocity.y < 0)
             {
-                Jump();
+                isJumping = false;
             }
-            else if (hasWallJumpAbility && lastOnWallTime > 0)
+            if (moveInput != 0)
             {
-                WallJump(wallJumpDirection);
+                if (isFacingRight ^ (moveInput > 0))
+                    Turn();
             }
-            else if (hasDoubleJumpAbility && canDoubleJump)
+
+            Movement();
+
+            if (!isDashing)
             {
-                DoubleJump();
-            }
-        }
-
-        if (hasDashAbility && canDash && !dashInCoolDown && lastPressedDashTime > 0)
-        {
-            StartCoroutine(Dash());
-        }
-
-        if (hasFireAbility && !fireInCoolDown && lastPressedFireTime > 0 && gameManager.appleCount > 0)
-        {
-            StartCoroutine(Fire());
-        }
-
-        if (moveInput != 0)
-        {
-            if (isFacingRight ^ (moveInput > 0))
-                Turn();
-        }
-
-        if (!isDashing)
-        {
-            if (rb.velocity.y < 0)
-            {
-                rb.gravityScale = gravityScale * fallGravityMultiplier;
-                rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
-            }
-            else
-            {
-                rb.gravityScale = gravityScale;
+                // increase gravity when falling
+                if (rb.velocity.y < 0)
+                {
+                    rb.gravityScale = gravityScale * fallGravityMultiplier;
+                    rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
+                }
+                else
+                {
+                    rb.gravityScale = gravityScale;
+                }
             }
         }
     }
 
     private void FixedUpdate()
     {
-        if (lastWallJumpTime <= 0 && !isDashing)
+        if (!playerFreezed && lastWallJumpTime <= 0 && !isDashing)
         {
             Run();
+        }
+    }
+
+    private void Movement()
+    {
+        // Jump
+        if (lastPressedJumpTime > 0 && jumpCoolDownTime <= 0)
+        {
+            if (lastOnGroundTime > 0 && !isJumping)
+                Jump();
+            else if (hasWallJumpAbility && lastOnWallTime > 0)
+                WallJump(wallJumpDirection);
+            else if (hasDoubleJumpAbility && canDoubleJump)
+                DoubleJump();
+        }
+
+        // Dash
+        if (hasDashAbility && canDash && !dashInCoolDown && lastPressedDashTime > 0)
+        {
+            StartCoroutine(Dash());
+        }
+
+        // Fire
+        if (hasFireAbility && !fireInCoolDown && lastPressedFireTime > 0 && gameManager.appleCount > 0)
+        {
+            StartCoroutine(Fire());
         }
     }
 
@@ -238,7 +267,7 @@ public class PlayerControl : MonoBehaviour
 
     private IEnumerator Fire()
     {
-        gameManager.appleFired();
+        gameManager.AppleFired();
         fireInCoolDown = true;
         GameObject newBullet = Instantiate(bullet, firePoint.position, transform.rotation);
         newBullet.GetComponent<Bullet>().direction = GetDirection();
@@ -278,6 +307,60 @@ public class PlayerControl : MonoBehaviour
         return wallJumpDirection != 0;
     }
 
+    private void FreezePlayer()
+    {
+        if (playerFreezed) return;
+        playerFreezed = true;
+        velocityMemory = rb.velocity;
+        gravityMemory = rb.gravityScale;
+        rb.velocity = Vector2.zero;
+        rb.gravityScale = 0;
+    }
+
+    private void UnfreezePlayer()
+    {
+        if (!playerFreezed) return;
+        playerFreezed = false;
+        rb.velocity = velocityMemory;
+        rb.gravityScale = gravityMemory;
+    }
+
+    private void HidePlayer()
+    {
+        spriteMask.transform.localScale = Vector3.zero;
+        trail.enabled = false;
+    }
+
+    private void ShowPlayer()
+    {
+        spriteMask.transform.localScale = Vector3.one;
+        trail.enabled = true;
+    }
+
+    public void PlayerDied()
+    {
+        StopAllCoroutines();
+        FreezePlayer();
+        StartCoroutine(DeathAnimation());
+    }
+
+    private IEnumerator DeathAnimation()
+    {
+        yield return new WaitForSeconds(1f);
+        HidePlayer();
+        deathEffect.Play();
+    }
+
+    public void StartDialogue()
+    {
+        FreezePlayer();
+    }
+
+    public void EndDialogue()
+    {
+        UnfreezePlayer();
+    }
+
     public void OnMoveInput(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<float>();
@@ -302,7 +385,6 @@ public class PlayerControl : MonoBehaviour
             lastPressedFireTime = fireInputBufferTime;
         }
     }
-
 
     public void OnDashInput(InputAction.CallbackContext context)
     {
