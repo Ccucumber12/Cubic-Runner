@@ -433,11 +433,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7395898803847391725, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
       propertyPath: gameScene
-      value: DevelopScene
+      value: StageScene
       objectReference: {fileID: 0}
     - target: {fileID: 7395898803847391725, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
       propertyPath: gameLength
-      value: 100
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 7395898803847391725, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
       propertyPath: onTimerTick.m_PersistentCalls.m_Calls.Array.size

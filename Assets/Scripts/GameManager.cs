@@ -34,6 +34,8 @@ public class GameManager : MonoBehaviour
     public int timer { get; private set; }
     public int appleCount { get; private set; }
     public bool playerAlive { get; private set; }
+    public Vector3 playerCheckpointPosition { get; private set; }
+    public bool isPlayerCheckpointSet { get; private set; }
 
     private IEnumerator timerCountDownCoroutine;
 
@@ -54,11 +56,6 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         timerCountDownCoroutine = TimerCountDown();
-    }
-
-    private void Update()
-    {
-        Debug.Log(currentControlScheme);
     }
 
     public void StartGame()
@@ -135,6 +132,7 @@ public class GameManager : MonoBehaviour
     {
         if (context.canceled)
         {
+            StopAllCoroutines();
             SceneManager.LoadScene("EnterScene");
         }
     }
@@ -154,6 +152,7 @@ public class GameManager : MonoBehaviour
     }
     public void ReachedGoal()
     {
+        isPlayerCheckpointSet = false;
         gamePause = true;
         StopCoroutine(timerCountDownCoroutine);
         SceneManager.LoadScene("EndScene");
@@ -164,6 +163,11 @@ public class GameManager : MonoBehaviour
         ControlsChanged(input.currentControlScheme);
     }
 
+    public void SetPlayerCheckpoint(Vector3 position)
+    {
+        playerCheckpointPosition = position;
+        isPlayerCheckpointSet = true;
+    }
 
     [System.Serializable]
     public class OnGameStartEvent : UnityEvent { }

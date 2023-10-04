@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7112219354278167486}
   - component: {fileID: 7112219354278167473}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7112219354443940074}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: LeftWallCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -128,7 +128,7 @@ GameObject:
   - component: {fileID: 7112219354497962118}
   - component: {fileID: 7112219354497962137}
   - component: {fileID: 7112219354497962136}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: DoubleJumpEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4998,7 +4998,7 @@ GameObject:
   - component: {fileID: 7112219354835825886}
   - component: {fileID: 7112219354835825884}
   - component: {fileID: 7112219354835825887}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: DeathEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9867,7 +9867,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7112219354860368962}
   - component: {fileID: 7112219354860368965}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9950,7 +9950,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7112219355364600262}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9982,7 +9982,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7112219355374993055}
   - component: {fileID: 7112219355374993054}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10045,7 +10045,7 @@ TrailRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -5
+  m_SortingOrder: -2
   m_Time: 1.5
   m_Parameters:
     serializedVersion: 3
@@ -10122,7 +10122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7112219355409442073}
   - component: {fileID: 7112219355409442072}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: RightEye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10206,7 +10206,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7112219355627757958}
   - component: {fileID: 7112219355627757977}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: LeftEye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10289,7 +10289,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7112219355819373320}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: FirePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10304,7 +10304,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7112219355819373321}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.034, y: 0, z: 0}
+  m_LocalPosition: {x: 0.616, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10320,7 +10320,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7112219355833016736}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: RightWallCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10356,7 +10356,7 @@ GameObject:
   - component: {fileID: 7112219355833882556}
   - component: {fileID: 7112219355833882557}
   - component: {fileID: 7112219355833882547}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -10582,7 +10582,7 @@ MonoBehaviour:
   hasFireAbility: 1
   firePoint: {fileID: 7112219355819373320}
   bullet: {fileID: 938436197567405467, guid: 85dc041479599464099a5f108ff488ec, type: 3}
-  fireCoolDownTime: 0.5
+  fireCoolDownTime: 0.4
   fireInputBufferTime: 0.1
   groundCheckPoint: {fileID: 7112219355364600262}
   groundCheckSize: {x: 0.8, y: 0.2}
@@ -10610,7 +10610,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7112219355952856314}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Checks
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -1,5 +1,4 @@
 using System.Collections;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -89,10 +88,12 @@ public class PlayerControl : MonoBehaviour
         gameManager.onPlayerDied.AddListener(PlayerDied);
         gameManager.onTimeUp.AddListener(PlayerDied);
 
-        Debug.Log("Set events");
         PlayerInput playerInput = GetComponent<PlayerInput>();
         playerInput.controlsChangedEvent.AddListener(gameManager.OnControlChanged);
         playerInput.actions["Restart"].canceled += gameManager.Restart;
+
+        if (gameManager.isPlayerCheckpointSet)
+            gameObject.transform.position = gameManager.playerCheckpointPosition;
 
         canDoubleJump = true;
         canDash = true;
@@ -391,6 +392,14 @@ public class PlayerControl : MonoBehaviour
         if (context.performed)
         {
             lastPressedDashTime = dashInputBufferTime;
+        }
+    }
+
+    public void OnCheckpointInput(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            gameManager.SetPlayerCheckpoint(transform.position);
         }
     }
 

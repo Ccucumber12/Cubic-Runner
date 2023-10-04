@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cde520ee23370941abcc3fcca7cfc3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 40
+  speed: 50
   lifespan: 5
   torque: -100
   collisionDelayTime: 0
