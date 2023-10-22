@@ -67,11 +67,11 @@ public class PlayerControl : MonoBehaviour
     private bool canDoubleJump;
     private bool canDash;
     private bool isFacingRight;
+    private bool playerFreezed;
 
     private Vector3 leftWallCheckPointDelta;
     private Vector3 rightWallCheckPointDelta;
-
-    private bool playerFreezed;
+    private Vector3 initialPosition;
     private Vector2 velocityMemory;
     private float gravityMemory;
 
@@ -92,16 +92,12 @@ public class PlayerControl : MonoBehaviour
         playerInput.controlsChangedEvent.AddListener(gameManager.OnControlChanged);
         playerInput.actions["Restart"].canceled += gameManager.Restart;
 
-        if (gameManager.isPlayerCheckpointSet)
-            gameObject.transform.position = gameManager.playerCheckpointPosition;
-
-        canDoubleJump = true;
-        canDash = true;
-        isFacingRight = true;
-        rb.gravityScale = gravityScale;
-        trail.enabled = renderTrail;
+        initialPosition = transform.position;
         leftWallCheckPointDelta = leftWallCheckPoint.position - transform.position;
         rightWallCheckPointDelta = rightWallCheckPoint.position - transform.position;
+        
+        ResetInitialValues();
+        trail.enabled = renderTrail;
     }
 
     private void OnDestroy()
@@ -124,7 +120,6 @@ public class PlayerControl : MonoBehaviour
         lastPressedDashTime -= Time.deltaTime;
         lastPressedFireTime -= Time.deltaTime;
 
-        #region checks
         if (GoundCheck())
         {
             lastOnGroundTime = coyoteTime;
@@ -137,7 +132,6 @@ public class PlayerControl : MonoBehaviour
             canDoubleJump = true;
             canDash = true;
         }
-        #endregion
 
         if (!playerFreezed)
         {
@@ -308,6 +302,27 @@ public class PlayerControl : MonoBehaviour
         return wallJumpDirection != 0;
     }
 
+    private void ResetInitialValues()
+    {
+        isJumping = false;
+        isDashing = false;
+        dashInCoolDown = false;
+        fireInCoolDown = false;
+        canDoubleJump = true;
+        canDash = true;
+        isFacingRight = true;
+        playerFreezed = false;
+
+        rb.velocity = Vector2.zero;
+        rb.gravityScale = gravityScale;
+
+        if (gameManager.isPlayerCheckpointSet)
+            transform.position = gameManager.playerCheckpointPosition;
+        else
+            transform.position = initialPosition;
+        transform.localScale = Vector3.one;
+    }
+
     private void FreezePlayer()
     {
         if (playerFreezed) return;
@@ -335,21 +350,28 @@ public class PlayerControl : MonoBehaviour
     private void ShowPlayer()
     {
         spriteMask.transform.localScale = Vector3.one;
-        trail.enabled = true;
+        trail.enabled = renderTrail;
     }
 
     public void PlayerDied()
     {
         StopAllCoroutines();
-        FreezePlayer();
         StartCoroutine(DeathAnimation());
     }
 
     private IEnumerator DeathAnimation()
     {
-        yield return new WaitForSeconds(1f);
+        FreezePlayer();
+        
+        yield return new WaitForSeconds(0.3f);
+        
         HidePlayer();
         deathEffect.Play();
+
+        yield return new WaitForSeconds(deathEffect.main.duration + 0.1f);
+
+        ResetInitialValues();
+        ShowPlayer();
     }
 
     public void StartDialogue()

@@ -28,7 +28,7 @@ public class Bullet : MonoBehaviour
         rb.velocity = new Vector2(speed, 0);
         rb.AddTorque(torque);
 
-        StartCoroutine(DelayedDisableIsTrigger());
+        //StartCoroutine(DelayedDisableIsTrigger());
         Destroy(gameObject, lifespan);
     }
 

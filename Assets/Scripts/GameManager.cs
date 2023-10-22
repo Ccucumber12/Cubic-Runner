@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
     public bool gamePause { get; private set; }
     public int timer { get; private set; }
     public int appleCount { get; private set; }
-    public bool playerAlive { get; private set; }
+    public bool playerSucceeded { get; private set; }
     public Vector3 playerCheckpointPosition { get; private set; }
     public bool isPlayerCheckpointSet { get; private set; }
 
@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
         timer = gameLength;
         appleCount = 0;
         gamePause = false;
-        playerAlive = true;
+        playerSucceeded = false;
 
         onGameStart.Invoke();
         StartCoroutine(timerCountDownCoroutine);
@@ -115,7 +115,7 @@ public class GameManager : MonoBehaviour
 
     private void TimeUp()
     {
-        playerAlive = false;
+        playerSucceeded = false;
         gamePause = true;
 
         onTimeUp.Invoke();
@@ -144,14 +144,11 @@ public class GameManager : MonoBehaviour
 
     public void PlayerDied()
     {
-        playerAlive = false;
-        gamePause = true;
-        StopCoroutine(timerCountDownCoroutine);
-        StartCoroutine(LoadEndScene(playerDeathAnimationLength));
         onPlayerDied.Invoke();
     }
     public void ReachedGoal()
     {
+        playerSucceeded = true;
         isPlayerCheckpointSet = false;
         gamePause = true;
         StopCoroutine(timerCountDownCoroutine);

@@ -43,7 +43,7 @@ public class EndManager : MonoBehaviour
         failedText.alpha = 0;
         failedString = failedText.text;
 
-        if (gameManager.playerAlive)
+        if (gameManager.playerSucceeded)
             StartCoroutine(SuccessAnimation());
         else
             StartCoroutine(FailureAnimation());
@@ -133,7 +133,7 @@ public class EndManager : MonoBehaviour
             if (!isAnimationFinished)
             {
                 StopAllCoroutines();
-                if (gameManager.playerAlive)
+                if (gameManager.playerSucceeded)
                 {
                     timeText.text = timeText.text.Substring(0, timeText.text.Length - 3) + gameManager.timer.ToString("D3");
                     appleCountText.text = appleCountText.text.Substring(0, appleCountText.text.Length - 3) + gameManager.appleCount.ToString("D3");
