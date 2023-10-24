@@ -16,6 +16,8 @@ public class Collector : MonoBehaviour
     {
         if (col.gameObject.tag == "Collectable")
         {
+            GameObject obj = Instantiate(col.gameObject.GetComponent<Collectable>().collectSFX, col.gameObject.transform.position, Quaternion.identity, null);
+            Destroy(obj, 2);
             Destroy(col.gameObject, 0.05f);
             gameManager.AppleCollected();
         }

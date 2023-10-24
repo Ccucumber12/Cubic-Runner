@@ -10,9 +10,8 @@ public class Explodable : MonoBehaviour
     {
         if (col.collider.tag == "Bullet")
         {
-            var obj = Instantiate(explosion, gameObject.transform);
-            obj.transform.parent = null;
-            obj.GetComponent<ParticleSystem>().Play();
+            var obj = Instantiate(explosion, transform.position, Quaternion.identity, null);
+            Destroy(obj, 3);
             Destroy(col.collider.gameObject, 0.05f);
             Destroy(gameObject, 0.05f);
         }

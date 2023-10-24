@@ -57,7 +57,11 @@ public class PlayerControl : MonoBehaviour
     public Vector2 wallCheckSize;
 
     [Header("Audio")]
+    public AudioSource jumpSFX;
+    public AudioSource dashSFX;
     public AudioSource landingSFX;
+    public AudioSource fireSFX;
+    public AudioSource explodeSFX;
 
     private float moveInput;
     private Rigidbody2D rb;
@@ -237,6 +241,7 @@ public class PlayerControl : MonoBehaviour
         lastOnGroundTime = 0;
         lastPressedJumpTime = 0;
         jumpCoolDownTime = jumpCoolDown;
+        jumpSFX.Play();
 
         rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
     }
@@ -271,6 +276,7 @@ public class PlayerControl : MonoBehaviour
         rb.gravityScale = 0;
         rb.velocity = new Vector2(0, 0);
         rb.AddForce(Vector2.right * GetDirection() * dashForce, ForceMode2D.Impulse);
+        dashSFX.Play();
         yield return new WaitForSeconds(dashTime);
         rb.gravityScale = originalGravity;
         isDashing = false;
@@ -284,7 +290,8 @@ public class PlayerControl : MonoBehaviour
         fireInCoolDown = true;
         GameObject newBullet = Instantiate(bullet, firePoint.position, transform.rotation);
         newBullet.GetComponent<Bullet>().direction = GetDirection();
-        
+        fireSFX.Play();
+
         yield return new WaitForSeconds(fireCoolDownTime);
         fireInCoolDown = false;
     }
@@ -380,15 +387,9 @@ public class PlayerControl : MonoBehaviour
     private IEnumerator RespawnAnimation()
     {
         FreezePlayer();
-        
         yield return new WaitForSeconds(0.3f);
-        
-        HidePlayer();
-        deathEffect.Play();
-        bloodStainEffect.Play();
-
+        PlayerExplode();
         yield return new WaitForSeconds(deathEffect.main.duration + 0.1f);
-
         ResetInitialValues();
         ShowPlayer();
     }
@@ -403,9 +404,15 @@ public class PlayerControl : MonoBehaviour
     {
         FreezePlayer() ;
         yield return new WaitForSeconds(0.5f);
+        PlayerExplode();
+    }
 
+    private void PlayerExplode()
+    {
         HidePlayer();
         deathEffect.Play();
+        bloodStainEffect.Play();
+        explodeSFX.Play();
     }
 
     public void StartDialogue()

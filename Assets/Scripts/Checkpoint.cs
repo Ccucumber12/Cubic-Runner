@@ -5,6 +5,7 @@ using UnityEngine;
 public class Checkpoint : MonoBehaviour
 {
     public ParticleSystem burstEffect;
+    public AudioSource burstSFX;
 
     private GameManager gameManager;
 
@@ -18,6 +19,7 @@ public class Checkpoint : MonoBehaviour
         if (collision.tag == "Player")
         {
             burstEffect.Play();
+            burstSFX.Play();
             gameManager.SetPlayerCheckpoint(transform.position);
         }
     }

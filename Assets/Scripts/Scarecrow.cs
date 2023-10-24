@@ -11,6 +11,7 @@ public class Scarecrow : MonoBehaviour
     public float triggerCoolDown;
     public Transform spriteTransform;
     public ParticleSystem burstParticle;
+    public AudioSource triggerSFX;
 
     [Header("Trigger Enter Shake")]
     public float shakeAnimationLength;
@@ -63,6 +64,7 @@ public class Scarecrow : MonoBehaviour
         Vector3 rotation = spriteTransform.localEulerAngles;
         float startTime = Time.time;
         burstParticle.Play();
+        triggerSFX.Play();
 
         while(Time.time - startTime <= shakeAnimationLength)
         {
