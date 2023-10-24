@@ -45,15 +45,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameLength: 300
-  playerDeathAnimationLength: 3
-  gameScene: DevelopScene
+  playerDeathAnimationLength: 2
+  gameScene: StageScene
   onGameStart:
     m_PersistentCalls:
       m_Calls: []
   onTimerTick:
     m_PersistentCalls:
       m_Calls: []
-  onTimeUp:
+  onTimesUp:
     m_PersistentCalls:
       m_Calls: []
   onAppleCountChanged:

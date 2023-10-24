@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -15,6 +16,7 @@ public class PlayerControl : MonoBehaviour
     public LayerMask solidLayer;
     public ParticleSystem doubleJumpEffect;
     public ParticleSystem deathEffect;
+    public ParticleSystem bloodStainEffect;
     public SpriteMask spriteMask;
     public TrailRenderer trail;
 
@@ -43,12 +45,19 @@ public class PlayerControl : MonoBehaviour
     public float fireCoolDownTime;
     public float fireInputBufferTime;
 
+    [Header("Look")]
+    public CinemachineVirtualCamera virtualCamera;
+    public float lookDistance;
+
     [Header("Checks")]
     public Transform groundCheckPoint;
     public Vector2 groundCheckSize;
     public Transform leftWallCheckPoint;
     public Transform rightWallCheckPoint;
     public Vector2 wallCheckSize;
+
+    [Header("Audio")]
+    public AudioSource landingSFX;
 
     private float moveInput;
     private Rigidbody2D rb;
@@ -69,6 +78,9 @@ public class PlayerControl : MonoBehaviour
     private bool isFacingRight;
     private bool playerFreezed;
 
+    private float lookInput;
+    private float initialVCamScreenY;
+
     private Vector3 leftWallCheckPointDelta;
     private Vector3 rightWallCheckPointDelta;
     private Vector3 initialPosition;
@@ -86,7 +98,7 @@ public class PlayerControl : MonoBehaviour
     {
         gameManager = GameManager.Instance;
         gameManager.onPlayerDied.AddListener(PlayerDied);
-        gameManager.onTimeUp.AddListener(PlayerDied);
+        gameManager.onTimesUp.AddListener(TimesUp);
 
         PlayerInput playerInput = GetComponent<PlayerInput>();
         playerInput.controlsChangedEvent.AddListener(gameManager.OnControlChanged);
@@ -98,12 +110,14 @@ public class PlayerControl : MonoBehaviour
         
         ResetInitialValues();
         trail.enabled = renderTrail;
+
+        initialVCamScreenY = virtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_ScreenY;
     }
 
     private void OnDestroy()
     {
         gameManager.onPlayerDied.RemoveListener(PlayerDied);
-        gameManager.onTimeUp.RemoveListener(PlayerDied);
+        gameManager.onTimesUp.RemoveListener(TimesUp);
         PlayerInput playerInput = GetComponent<PlayerInput>();
         playerInput.controlsChangedEvent.RemoveListener(gameManager.OnControlChanged);
         playerInput.actions["Restart"].canceled -= gameManager.Restart;
@@ -122,9 +136,11 @@ public class PlayerControl : MonoBehaviour
 
         if (GoundCheck())
         {
+            if (lastOnGroundTime < 0 && rb.velocity.y <= 0)
+                landingSFX.Play();
             lastOnGroundTime = coyoteTime;
             canDoubleJump = true;
-            canDash = true;
+            canDash = true;   
         }
         else if(WallCheck())
         {
@@ -161,6 +177,8 @@ public class PlayerControl : MonoBehaviour
                 }
             }
         }
+
+        virtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_ScreenY = initialVCamScreenY + lookDistance * lookInput;
     }
 
     private void FixedUpdate()
@@ -356,10 +374,10 @@ public class PlayerControl : MonoBehaviour
     public void PlayerDied()
     {
         StopAllCoroutines();
-        StartCoroutine(DeathAnimation());
+        StartCoroutine(RespawnAnimation());
     }
 
-    private IEnumerator DeathAnimation()
+    private IEnumerator RespawnAnimation()
     {
         FreezePlayer();
         
@@ -367,11 +385,27 @@ public class PlayerControl : MonoBehaviour
         
         HidePlayer();
         deathEffect.Play();
+        bloodStainEffect.Play();
 
         yield return new WaitForSeconds(deathEffect.main.duration + 0.1f);
 
         ResetInitialValues();
         ShowPlayer();
+    }
+
+    public void TimesUp()
+    {
+        StopAllCoroutines();
+        StartCoroutine(DeathAnimation());
+    }
+
+    private IEnumerator DeathAnimation()
+    {
+        FreezePlayer() ;
+        yield return new WaitForSeconds(0.5f);
+
+        HidePlayer();
+        deathEffect.Play();
     }
 
     public void StartDialogue()
@@ -423,6 +457,11 @@ public class PlayerControl : MonoBehaviour
         {
             gameManager.SetPlayerCheckpoint(transform.position);
         }
+    }
+
+    public void OnLookInput(InputAction.CallbackContext context)
+    {
+        lookInput = context.ReadValue<float>();
     }
 
 #if UNITY_EDITOR

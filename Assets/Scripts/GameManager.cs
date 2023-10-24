@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
 
     public OnGameStartEvent onGameStart;
     public OnTimerTickEvent onTimerTick;
-    public OnTimeUpEvent onTimeUp;
+    public OnTimesUpEvent onTimesUp;
     public OnAppleCountChangedEvent onAppleCountChanged;
     public OnPlayerDiedEvent onPlayerDied;
     public OnReachedGoalEvent onReachedGoal;
@@ -53,11 +53,6 @@ public class GameManager : MonoBehaviour
         currentControlScheme = "Keyboard";
     }
 
-    private void Start()
-    {
-        timerCountDownCoroutine = TimerCountDown();
-    }
-
     public void StartGame()
     {
         SceneManager.LoadScene(gameScene);
@@ -68,6 +63,7 @@ public class GameManager : MonoBehaviour
         playerSucceeded = false;
 
         onGameStart.Invoke();
+        timerCountDownCoroutine = TimerCountDown();
         StartCoroutine(timerCountDownCoroutine);
     }
 
@@ -105,7 +101,7 @@ public class GameManager : MonoBehaviour
             }
             yield return new WaitForSeconds(1);
         }
-        TimeUp();
+        TimesUp();
     }
 
     private void TimerTick()
@@ -113,12 +109,13 @@ public class GameManager : MonoBehaviour
         onTimerTick.Invoke();
     }
 
-    private void TimeUp()
+    private void TimesUp()
     {
         playerSucceeded = false;
         gamePause = true;
+        isPlayerCheckpointSet = false;
 
-        onTimeUp.Invoke();
+        onTimesUp.Invoke();
         StartCoroutine(LoadEndScene(playerDeathAnimationLength));
     }
 
@@ -133,6 +130,7 @@ public class GameManager : MonoBehaviour
         if (context.canceled)
         {
             StopAllCoroutines();
+            isPlayerCheckpointSet = false;
             SceneManager.LoadScene("EnterScene");
         }
     }
@@ -176,7 +174,7 @@ public class GameManager : MonoBehaviour
     public class OnAppleCountChangedEvent : UnityEvent<int> { }
 
     [System.Serializable]
-    public class OnTimeUpEvent : UnityEvent { }
+    public class OnTimesUpEvent : UnityEvent { }
 
     [System.Serializable]
     public class OnPlayerDiedEvent : UnityEvent { }

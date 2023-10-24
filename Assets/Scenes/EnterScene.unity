@@ -158,7 +158,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.00048828125, y: 118}
+  m_AnchoredPosition: {x: 0.00048828125, y: 78}
   m_SizeDelta: {x: 0, y: -383.54553}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &9793449
@@ -181,9 +181,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Apple
+  m_text: 'Cubic
 
-    Runner'
+    Dash'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e8f7faf62ad9936478061973e2bb43d8, type: 2}
   m_sharedMaterial: {fileID: -7860732760543935121, guid: e8f7faf62ad9936478061973e2bb43d8, type: 2}
@@ -210,8 +210,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 140
-  m_fontSizeBase: 140
+  m_fontSize: 100
+  m_fontSizeBase: 100
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -430,22 +430,6 @@ PrefabInstance:
     - target: {fileID: 7395898803847391724, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
       propertyPath: m_Name
       value: GameManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 7395898803847391725, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
-      propertyPath: gameScene
-      value: StageScene
-      objectReference: {fileID: 0}
-    - target: {fileID: 7395898803847391725, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
-      propertyPath: gameLength
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 7395898803847391725, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
-      propertyPath: onTimerTick.m_PersistentCalls.m_Calls.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7395898803847391725, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
-      propertyPath: onAppleCountChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7395898803847391730, guid: 704308d4bd6fa20429c839601b244a3a, type: 3}
       propertyPath: m_RootOrder
@@ -753,10 +737,10 @@ RectTransform:
   m_Father: {fileID: 1548346967}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -141}
-  m_SizeDelta: {x: 489.8381, y: 48.4333}
+  m_SizeDelta: {x: 0, y: -551.5667}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1548346962
 GameObject:
@@ -819,10 +803,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 960, y: 600}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3

@@ -30,7 +30,6 @@ public class DialogueBox : MonoBehaviour
     {
         if (_instance == null)
         {
-            DontDestroyOnLoad(gameObject);
             _instance = this;
         }
         else if (_instance != this)
